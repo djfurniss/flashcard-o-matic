@@ -1,17 +1,39 @@
-import {React, useState} from "react";
+import {React, useState, useEffect} from "react";
 import { Switch, Route} from "react-router-dom";
-import Header from "./Header";
-import CreateDeckBtn from "./CreateDeckBtn";
-import DeckList from "./DeckList"
-import DeckInfo from "./DeckInfo"
-import NotFound from "./NotFound";
+import { listDecks } from "../utils/api/index.js";
+import Header from "./common/Header";
+import NotFound from "./common/NotFound";
+import Home from "./home/Home.js";
+import EditDeck from "./EditDeck/EditDeck.js";
+import CreateDeck from "./CreateDeck/CreateDeck.js";
+import DeckView from "./DeckView/DeckView.js";
+import DeckStudy from "./DeckStudy/DeckStudy.js";
 
-//Home Page
 function Layout() {
 //---state---
   const [decks, setDecks] = useState([]);
   const [deck, setDeck] = useState({});
-  const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8080";
+
+//---hooks---
+  useEffect(() => {
+    // setDecks([]);
+    const abortController = new AbortController();
+
+    async function loadDecks() {
+      try {
+        let _decks = await listDecks(abortController.signal);
+        setDecks(_decks);
+        // setLoaded(true);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    loadDecks();
+    return () => {
+      console.info("aborting");
+      abortController.abort();
+    };
+  }, []);
 
   return (
     <>
@@ -19,23 +41,29 @@ function Layout() {
       <div className="container">
         <Switch>
           <Route exact path="/">
-              <CreateDeckBtn/>
-              <DeckList decks={decks} setDecks={setDecks} setDeck={setDeck}/>
+              <Home decks={decks} setDecks={setDecks} setDeck={setDeck}/>
           </Route>
 
-          <Route path="/decks/:deckId/study">
-              {/* Study */}
+            {/* Clicking Create Deck  */}
+          <Route path='/decks/new'>
+            <CreateDeck decks={decks} setDecks={setDecks}/>
           </Route>
 
-          <Route path="/decks/:deckId">
-              <DeckInfo deck={deck}/>
+          <Route exact path="/decks/:deckId/edit">
+            <EditDeck deck={deck} setDeck={setDeck}/>
           </Route>
 
-          <Route exact path="/decks/create">
-              <p>Create</p>
+            {/* Clicking the View button */}
+          <Route exact path="/decks/:deckId">
+            <DeckView deck={deck} setDeck={setDeck}/>
           </Route>
 
-          <Route path="">
+            {/* Clicking Study  */}
+          <Route path='/decks/:deckId/study'>
+             <DeckStudy/>
+          </Route>
+
+          <Route>
             <NotFound />
           </Route>
 
