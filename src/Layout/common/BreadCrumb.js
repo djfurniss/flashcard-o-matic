@@ -1,25 +1,27 @@
-import { Link } from "react-router-dom";
-export default function BreadCrumb() {
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { readDeck } from "../../utils/api";
 
-    console.log(window.location.pathname)
+export default function BreadCrumb({deck = {}, pageName}) {
+  const {cardId, deckId} = useParams();
+  console.log(deck.id)
+
   return (
     <nav aria-label="breadcrumb">
       <ol className="breadcrumb">
         <li className="breadcrumb-item">
           <Link to="/">Home</Link>
         </li>
-        {/* {breadcrumb.map(path=>{
-            return (
-            <li className="breadcrumb-item">
-                {path}
-            </li>)
-        })} */}
 
-        {/* 
-        <li className="breadcrumb-item active" aria-current="page">
-          Library
-        </li> */}
+        {deckId && 
+          <li className="breadcrumb-item">
+            {deck.name}
+        </li>}
+
+        {pageName && 
+          <li className="breadcrumb-item"> {cardId ? `${pageName} ${cardId}` : `${pageName}`} </li>
+          }
       </ol>
     </nav>
-  );
-}
+  )
+};

@@ -1,59 +1,43 @@
 import React , { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { deleteDeck, readDeck } from "../../utils/api";
-import DeckInfoCard from "./DeckInfoCard";
+import { deleteDeck, listDecks} from "../../utils/api";
+import DeckListCard from "./DeckListCard";
 
 export default function DeckList({decks, setDeck, setDecks}){
-
 //---hooks---
   const history = useHistory();
 
 //---handlers---
-  const handleViewClick = async (deck) => {
+  const handleViewClick = (deck) => {
+    setDeck(deck);
     history.push(`/decks/${deck.id}`);
-  }
+  };
 
   const handleStudyClick = (deck) => {
-    setDeck(deck)
-    history.push(`/decks/${deck.id}/study`)
-  }
+    setDeck(deck);
+    history.push(`/decks/${deck.id}/study`);
+  };
 
-  const handleDeleteDeck = async (id) =>{
+  const handleDeleteClick = async (id) =>{
     try{
       window.confirm("Are you sure you want to delete this deck?") && await deleteDeck(id);
-
+      setDecks(await listDecks());
     }catch (err){
-      console.log(err)
+      throw err
     }
-  }
-
-  // useEffect(()=>{
-  //   const abortController = new AbortController();
-  //     async function _deleteDeck(idToDel){
-  //       try{
-  //       window.confirm("Are you sure you want to delete this deck?")
-  //       const response = await deleteDeck(idToDel, abortController.signal)
-  //       console.log(response)
-  //       }catch(err){
-  //         if(err.name === "AbortError"){
-  //           console.log("aborted")
-  //         }else throw err.message
-  //       };
-  //     };
-  //   idToDel && _deleteDeck(idToDel);
-  // },[idToDel]);
+  };
 
 //---return---
   return(
-    <>
+    <div>
       {decks.map(deck => {
-      return <DeckInfoCard 
-        key={deck.id} 
-        deck={deck} 
-        handleViewClick={()=>handleViewClick(deck)}
-        handleStudyClick={()=>handleStudyClick(deck)}
-        handleDeleteDeck={()=>handleDeleteDeck(deck.id)}/>
+        return <DeckListCard 
+          key={deck.id} 
+          deck={deck} 
+          handleViewClick={()=>handleViewClick(deck)}
+          handleStudyClick={()=>handleStudyClick(deck)}
+          handleDeleteClick={()=>handleDeleteClick(deck.id)}/>
     })}
-    </>
+    </div>
   )
 }

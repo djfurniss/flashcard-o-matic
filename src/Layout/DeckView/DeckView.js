@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom";
 import { readDeck } from "../../utils/api";
-import BreadCrumb from "../common/BreadCrumb";
+import CardList from "./CardList";
 
 export default function DeckView({deck, setDeck}){
     const history = useHistory();
     const {deckId} = useParams();
-    // console.log(deckId)
 //---effects---
     useEffect(()=>{
         const abortController = new AbortController();
         async function loadDeckInfo(){
             try{
                 const deckInfoFromAPI = await readDeck(deckId, abortController.signal);
-                setDeck(deckInfoFromAPI)
+                await setDeck(deckInfoFromAPI);
             }catch (err){
                 if (err.name === "AbortError"){
                     console.log("aborted")
@@ -24,7 +23,7 @@ export default function DeckView({deck, setDeck}){
         loadDeckInfo();
 
         return ()=>abortController.abort();
-    }, [])
+    }, [deck.id])
 
 //---handlers---
     const handleStudyClick = ()=>{
@@ -33,6 +32,10 @@ export default function DeckView({deck, setDeck}){
 
     const handleEditClick = () =>{
         history.push(`/decks/${deck.id}/edit`)
+    }
+
+    const handleAddCardsClick = ()=>{
+        history.push(`/decks/${deck.id}/cards/new`)
     }
 //---return---
     return (
@@ -46,7 +49,8 @@ export default function DeckView({deck, setDeck}){
                         onClick={handleEditClick}>Edit</button>
                     <button className="btn btn-primary mr-2"
                         onClick={handleStudyClick}>Study</button>
-                    <button className="btn btn-success">Add Cards</button>
+                    <button className="btn btn-success"
+                        onClick={handleAddCardsClick}>Add Cards</button>
                 </div>
                 <div>
                     <button className="btn btn-danger">Delete</button>
@@ -55,24 +59,7 @@ export default function DeckView({deck, setDeck}){
 
             <h3>Cards</h3>
             <div>
-                {deck.cards && deck.cards.map(card=>{
-                    return (
-                        <div className="list-group-item" key={card.id}>
-                            <div className="row">
-                                <div className="col">
-                                    <p>{card.front}</p>
-                                </div>
-                                <div className="col">
-                                    <p>{card.back}</p>
-                                </div>
-                            </div>
-                            <div className="row justify-content-end">
-                                <button className="btn btn-secondary mx-2">Edit</button>
-                                <button className="btn btn-danger mx-2">Delete</button>
-                            </div>
-                        </div>
-                    );
-                })};
+                {deck.cards && <CardList deck={deck} setDeck={setDeck}/>}
             </div>
         </div>
     )

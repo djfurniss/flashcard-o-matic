@@ -13,7 +13,7 @@ export default function DeckForm({deck, setDeck, submitHandler, cancelHandler, s
             setNewDeck({...deck, [target.name]: target.value})
         }
     }
-    console.log(deck)
+    // console.log(deck)
     // console.log(newDeck)
 
 //---return---
@@ -23,6 +23,8 @@ export default function DeckForm({deck, setDeck, submitHandler, cancelHandler, s
             <input
                 type="text"
                 name="name"
+                required = {true}
+                // minLength={3}
                 className="form-control"
                 value = {deck.name}
                 onChange={inputChangeHandler}/>

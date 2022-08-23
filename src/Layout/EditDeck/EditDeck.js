@@ -1,14 +1,26 @@
+import { useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { updateDeck } from "../../utils/api";
+import { readDeck, updateDeck } from "../../utils/api";
 import DeckForm from "../common/DeckForm";
+
 export default function EditDeck({deck, setDeck}){
 
     const history = useHistory();
+    const {deckId} = useParams();
 
-    const submitHandler = (event)=>{
+    useEffect(()=>{
+        async function loadDeck(){
+        const _deck = await readDeck(deckId)
+        setDeck(_deck)
+        }
+
+        loadDeck();
+    },[])
+
+    const submitHandler = async (event)=>{
         event.preventDefault();
-        updateDeck(deck);
-        // setDecks([...decks, newDeck])
+        await updateDeck(deck);
+        history.push(`/decks/${deck.id}`)
     }
 
     const cancelHandler = ()=>{
