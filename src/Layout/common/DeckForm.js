@@ -1,10 +1,5 @@
-import { useState } from "react"
-
 //using same form for create deck AND edit deck...
 export default function DeckForm({deck, setDeck, submitHandler, cancelHandler, setNewDeck}){
-    // let newdeck = false;
-    // if (!deck.id) {newdeck = true;}
-    // console.log(newdeck)
 
     const inputChangeHandler = ({target}) =>{
         if(deck.id){
@@ -23,8 +18,7 @@ export default function DeckForm({deck, setDeck, submitHandler, cancelHandler, s
             <input
                 type="text"
                 name="name"
-                required = {true}
-                // minLength={3}
+                required
                 className="form-control"
                 value = {deck.name}
                 onChange={inputChangeHandler}/>
@@ -33,6 +27,7 @@ export default function DeckForm({deck, setDeck, submitHandler, cancelHandler, s
             <textarea
                 name="description"
                 className="form-control"
+                required
                 value = {deck.description}
                 onChange={inputChangeHandler}/>
             

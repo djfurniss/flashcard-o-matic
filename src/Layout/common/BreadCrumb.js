@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { readDeck } from "../../utils/api";
 
-export default function BreadCrumb({deck = {}, pageName}) {
+export default function BreadCrumb({deck = {}, pageName=null}) {
   const {cardId, deckId} = useParams();
-  console.log(deck.id)
+  // console.log(deck.id)
 
   return (
     <nav aria-label="breadcrumb">

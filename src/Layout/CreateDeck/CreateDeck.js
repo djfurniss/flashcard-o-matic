@@ -11,7 +11,6 @@ export default function CreateDeck({decks, setDecks}){
     
     const submitHandler = async (event)=>{
         event.preventDefault();
-        // console.log(newDeck)
         const response = await createDeck(newDeck)
         history.push(`/decks/${response.id}`)
     }

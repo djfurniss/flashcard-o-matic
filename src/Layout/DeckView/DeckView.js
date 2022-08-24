@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom";
-import { readDeck } from "../../utils/api";
+import { readDeck, deleteDeck, deleteCard } from "../../utils/api";
 import CardList from "./CardList";
 
 export default function DeckView({deck, setDeck}){
@@ -37,6 +37,12 @@ export default function DeckView({deck, setDeck}){
     const handleAddCardsClick = ()=>{
         history.push(`/decks/${deck.id}/cards/new`)
     }
+
+    const handleDeleteDeckClick = async()=>{
+        window.confirm("Are you sure you want to delete this deck?") &&
+        await deleteDeck(deckId) &&
+        history.push("/")
+    }
 //---return---
     return (
         <div className="container">
@@ -53,7 +59,8 @@ export default function DeckView({deck, setDeck}){
                         onClick={handleAddCardsClick}>Add Cards</button>
                 </div>
                 <div>
-                    <button className="btn btn-danger">Delete</button>
+                    <button className="btn btn-danger"
+                        onClick={handleDeleteDeckClick}>Delete</button>
                 </div>
             </div>
 

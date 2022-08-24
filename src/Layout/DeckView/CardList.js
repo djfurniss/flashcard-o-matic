@@ -13,7 +13,9 @@ export default function CardList({ deck, setDeck }) {
         window.confirm("Are you sure you want to delete this card?") && await deleteCard(id)
         const _deck = await readDeck(deck.id)
         setDeck(_deck)
-        }catch (err) {}
+        }catch (err) {
+          throw err
+        }
     }
 
   return (

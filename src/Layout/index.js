@@ -4,7 +4,7 @@ import { listDecks } from "../utils/api/index.js";
 import Header from "./common/Header";
 import NotFound from "./common/NotFound";
 import BreadCrumb from "./common/BreadCrumb.js";
-import Home from "./home/Home.js";
+import Home from "./Home/Home.js";
 import EditDeck from "./EditDeck/EditDeck.js";
 import CreateDeck from "./CreateDeck/CreateDeck.js";
 import DeckView from "./DeckView/DeckView.js";
@@ -48,7 +48,7 @@ function Layout() {
             {/* Clicking Add Cards  */}
           <Route path="/decks/:deckId/cards/new">
             <BreadCrumb deck={deck} pageName="Add Card"/>
-            <AddCard setDeck={setDeck}/>
+            <AddCard deck={deck} setDeck={setDeck}/>
           </Route>
 
             {/* Clicking Edit on a card  */}
