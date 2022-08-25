@@ -39,6 +39,9 @@ export default function EditDeck({deck, setDeck}){
 
 //---return---
     return (
-        <DeckForm deck={deck} setter={setDeck} handleSubmit={handleSubmit} handleCancel={handleCancel}/>
+        //depends on deck.id to make sure the inputs in DeckForm that are sent from the deck stay controlled
+        //DeckForm renders only once deck is set and the inputs in DeckForm are then controlled from deck's properties
+        deck.id ? <DeckForm deck={deck} setter={setDeck} handleSubmit={handleSubmit} handleCancel={handleCancel}/>
+        : <p>loading</p>
     )
 };
