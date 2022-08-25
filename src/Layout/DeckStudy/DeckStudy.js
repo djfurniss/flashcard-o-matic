@@ -1,44 +1,47 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { readDeck } from "../../utils/api";
 import NotEnoughCards from "../common/NotEnoughCards";
 import StudyCard from "./StudyCard";
 
 export default function DeckStudy({deck, setDeck}){
-    const {deckId} = useParams();
+//---misc. hooks---
+    const { deckId } = useParams();
+        
+//---state---
+    const [cardIndex, setCardIndex] = useState(0);
 
-    const [cardIndex, setCardIndex] = useState(0)
-    //one card at a time.. the next button will change this state to set the index of the next card to show
-    // if(cardIndex === deck.cards.length-1) 
-
-
+//---effect---
     useEffect(()=>{
-        const abortController = new AbortController
+        const abortController = new AbortController();
         async function loadDeck(){
             try{
-                const resp = await readDeck(deckId, abortController.signal)
-                setDeck(resp)
+                setDeck(await readDeck(deckId, abortController.signal))
             }catch (err){
                 if (err.name === "AbortError"){
-                    console.log("aborted")
+                    //ignore user abort
                 } else throw err
             };
         };
-        deckId && loadDeck();
-    }, [])
-    
-    return (
-        <>
-        <h1>{`Study: ${deck.name}`}</h1>
-        {deck.cards && deck.cards.length>2 && 
-            <StudyCard 
-            card={deck.cards[cardIndex]} 
-            index={cardIndex} 
-            cardsLength={deck.cards.length} 
-            key={cardIndex} 
-            setCardIndex={setCardIndex}/>}
+        loadDeck();
+        return () => abortController.abort();
+    }, []);
 
-        {deck.cards && deck.cards.length <=2 && <NotEnoughCards deck={deck}/>}
-        </>
+//---return---
+    return (
+        <div>
+            <h1>{`Study: ${deck.name}`}</h1>
+            {/* cards need to exist as well as have a certain lengh in order to study */}
+            {deck.cards && deck.cards.length>2 &&
+                <StudyCard 
+                key={cardIndex} 
+                card={deck.cards[cardIndex]} //this changing state, cardIndex, keeps up with the deck's cards at a certain index
+                index={cardIndex} 
+                cardsAmount={deck.cards.length} 
+                setCardIndex={setCardIndex}/>}
+
+            {/* cards still need to exist here also but the length of the array renders a different component, NotEnoughCards */}
+            {deck.cards && deck.cards.length <=2 && <NotEnoughCards cardsAmount={deck.cards.length}/>}
+        </div>
         )
 };

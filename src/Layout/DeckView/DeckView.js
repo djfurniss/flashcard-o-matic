@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react"
+import React, { useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { readDeck, deleteDeck, deleteCard } from "../../utils/api";
+import { readDeck, deleteDeck} from "../../utils/api";
 import CardList from "./CardList";
 
 export default function DeckView({deck, setDeck}){
+//---misc. hooks---
     const history = useHistory();
-    const {deckId} = useParams();
+    const { deckId } = useParams();
+    
 //---effects---
     useEffect(()=>{
         const abortController = new AbortController();
@@ -15,59 +17,64 @@ export default function DeckView({deck, setDeck}){
                 await setDeck(deckInfoFromAPI);
             }catch (err){
                 if (err.name === "AbortError"){
-                    console.log("aborted")
+                    //ignore user abort
                 }else throw err 
             };
         };
-
         loadDeckInfo();
-
         return ()=>abortController.abort();
-    }, [deck.id])
+    }, []);
 
-//---handlers---
-    const handleStudyClick = ()=>{
-        history.push(`/decks/${deck.id}/study`)
-    }
+//---handler---
+    const handleClick = async({target}) => {
+        //unless a deck is being deleted, it's just pushing the user to another page
+        //every button except delete has a value attribute that is set to the path it will push to
+        if (target.name === "delete"){
+            window.confirm("Are you sure you want to delete this deck?") &&
+            await deleteDeck(deckId) &&
+            history.push("/");
+        }else history.push(`/decks/${deck.id}/${target.value}`)
+    };
 
-    const handleEditClick = () =>{
-        history.push(`/decks/${deck.id}/edit`)
-    }
-
-    const handleAddCardsClick = ()=>{
-        history.push(`/decks/${deck.id}/cards/new`)
-    }
-
-    const handleDeleteDeckClick = async()=>{
-        window.confirm("Are you sure you want to delete this deck?") &&
-        await deleteDeck(deckId) &&
-        history.push("/")
-    }
 //---return---
     return (
         <div className="container">
-            {/* <BreadCrumb location={window.location}/> */}
             <h3>{deck.name}</h3>
             <p>{deck.description}</p>
-            <div className="row px-3 justify-content-between mb-4">
+            <div className="row px-3 justify-content-between mb-4">{/* buttons */}
                 <div>
-                    <button className="btn btn-secondary mr-2"
-                        onClick={handleEditClick}>Edit</button>
-                    <button className="btn btn-primary mr-2"
-                        onClick={handleStudyClick}>Study</button>
-                    <button className="btn btn-success"
-                        onClick={handleAddCardsClick}>Add Cards</button>
+                    <button 
+                        name="edit"
+                        value="edit"
+                        onClick={handleClick}
+                        className="btn btn-secondary mr-2">
+                        Edit
+                    </button>
+                    <button 
+                        name="study"
+                        value="study"
+                        onClick={handleClick}
+                        className="btn btn-primary mr-2">
+                        Study
+                    </button>
+                    <button 
+                        name="add"
+                        value="cards/new"
+                        onClick={handleClick}
+                        className="btn btn-success">
+                        Add Cards
+                    </button>
                 </div>
                 <div>
-                    <button className="btn btn-danger"
-                        onClick={handleDeleteDeckClick}>Delete</button>
+                    <button 
+                        name="delete"
+                        onClick={handleClick}
+                        className="btn btn-danger">
+                        Delete
+                    </button>
                 </div>
             </div>
-
-            <h3>Cards</h3>
-            <div>
-                {deck.cards && <CardList deck={deck} setDeck={setDeck}/>}
-            </div>
+        {deck.cards && <CardList deck={deck} setDeck={setDeck}/>}
         </div>
     )
-}
+};

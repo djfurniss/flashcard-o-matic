@@ -1,34 +1,44 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { readDeck, updateDeck } from "../../utils/api";
 import DeckForm from "../common/DeckForm";
 
 export default function EditDeck({deck, setDeck}){
-
+//---misc. hooks---
     const history = useHistory();
-    const {deckId} = useParams();
+    const { deckId } = useParams();
 
-    useEffect(()=>{
+//---effect---
+    useEffect(() => {
+        const abortController = new AbortController();
         async function loadDeck(){
-        const _deck = await readDeck(deckId)
-        setDeck(_deck)
-        }
-
+            try{
+            //once this page is loaded, the deckId param is pulled from the url to set the current deck
+            //even when refreshed, the page is still working with the deck's most recent state
+            setDeck(await readDeck(deckId, abortController.signal));
+            }catch(err){
+                if (err.name === "AbortError"){
+                    //ignore user abort
+                }else throw err;
+            };
+        };
         loadDeck();
-    },[])
+        return () => abortController.abort();
+    },[]);
 
-    const submitHandler = async (event)=>{
+//---handlers---
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        //the deck data is updated before the user is pushed back to the deck page
+        //this way, the moment it renders, it renders with the updated data
         await updateDeck(deck);
-        history.push(`/decks/${deck.id}`)
-    }
+        history.push(`/decks/${deck.id}`);
+    };
 
-    const cancelHandler = ()=>{
-        history.push(`/decks/${deck.id}`)
-    }
+    const handleCancel = () => history.push(`/decks/${deck.id}`);
 
+//---return---
     return (
-        <DeckForm deck={deck} setDeck={setDeck} submitHandler={submitHandler} cancelHandler={cancelHandler}/>
+        <DeckForm deck={deck} setter={setDeck} handleSubmit={handleSubmit} handleCancel={handleCancel}/>
     )
-
-}
+};

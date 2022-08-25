@@ -1,16 +1,15 @@
-import {React, useState, useEffect} from "react";
+import React, { useState } from "react";
 import { Switch, Route } from "react-router-dom";
-import { listDecks } from "../utils/api/index.js";
 import Header from "./common/Header";
 import NotFound from "./common/NotFound";
 import BreadCrumb from "./common/BreadCrumb.js";
 import Home from "./Home/Home.js";
 import EditDeck from "./EditDeck/EditDeck.js";
 import CreateDeck from "./CreateDeck/CreateDeck.js";
-import DeckView from "./DeckView/DeckView.js";
 import DeckStudy from "./DeckStudy/DeckStudy.js";
 import AddCard from "./AddCard/AddCard.js";
 import EditCard from "./EditCard/EditCard.js";
+import DeckView from "./DeckView/DeckView.js";
 
 function Layout() {
 //---state---
@@ -33,16 +32,16 @@ function Layout() {
             <EditDeck deck={deck} setDeck={setDeck}/>
           </Route>
 
+            {/* Clicking Create Deck  */}
+          <Route strict exact path="/decks/new">
+            <BreadCrumb pageName="Create Deck"/>
+            <CreateDeck/>
+          </Route>
+
             {/* Clicking Study  */}
           <Route path="/decks/:deckId/study">
             <BreadCrumb deck={deck} pageName="Study"/>
             <DeckStudy deck={deck} setDeck={setDeck}/>
-          </Route>
-
-            {/* Clicking Create Deck  */}
-          <Route strict exact path="/decks/new">
-            <BreadCrumb pageName="Create Deck"/>
-            <CreateDeck decks={decks} setDecks={setDecks}/>
           </Route>
 
             {/* Clicking Add Cards  */}
@@ -66,7 +65,6 @@ function Layout() {
           <Route>
             <NotFound />
           </Route>
-
         </Switch>
       </div>
     </main>

@@ -1,52 +1,55 @@
 ///decks/:deckId/cards/new
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom"
 import { readDeck, createCard } from "../../utils/api";
-import CardForm from "../common/CardForm"
+import CardForm from "../common/CardForm";
 
 export default function AddCard({deck, setDeck}){
-//---state and hooks---
-const history = useHistory();
-const {deckId} = useParams();
-const [newCard, setNewCard] = useState({front: "", back: "", deckId: deckId})
+//---misc.  hooks---
+    const history = useHistory();
+    const { deckId } = useParams();
+    
+//---state---
+    const INIT_NEW_CARD = {front: "", back: "", deckId: deckId};
+    const [newCard, setNewCard] = useState(INIT_NEW_CARD);
 
 //---effects---   
-    useEffect(()=>{
+    useEffect(() => {
         const abortController = new AbortController();
         async function loadDeckInfo(){
             try{
-                const deckInfoFromAPI = await readDeck(deckId, abortController.signal);
-                await setDeck(deckInfoFromAPI);
+                setDeck(await readDeck(deckId, abortController.signal));
             }catch (err){
                 if (err.name === "AbortError"){
-                    console.log("aborted")
+                    //ignore user abort
                 }else throw err 
             };
         };
-        
         loadDeckInfo();
-        
-        return ()=>abortController.abort();
-    }, [])
+        return () => abortController.abort();
+    }, []);
     
 //---handlers---
-    const submitHandler = async(event) =>{
+    const handleSubmit = async(event) => {
         event.preventDefault();
+            //if user puts nothing in the fields and accidentally clicks done,
+            //no card is made and they are brought back to the deck page
             if(newCard.front === "" && newCard.back === "") {
-                history.push(`/decks/${deckId}`)
+                history.push(`/decks/${deckId}`);
             }else {
+                //adds the new card to the deck 
                 await createCard(deckId, newCard);
-                setNewCard({front: "", back: "", deckId: null})
-                history.push(`/decks/${deckId}`)
-            }
-    }
+                //clears the form and resets the state
+                setNewCard(INIT_NEW_CARD);
+                history.push(`/decks/${deckId}`);
+            };
+    };
 
-    const handleSaveNewCard = ()=>{
-        createCard(deckId, newCard);
-        setNewCard({front: "", back: "", deckId: deckId});
-    }
+    const handleSaveNewCard = async() =>{
+        await createCard(deckId, newCard);
+        setNewCard(INIT_NEW_CARD);
+    };
 
-    return (
-        <CardForm deck={deck} card={newCard} setNewCard={setNewCard} submitHandler={submitHandler} handleSaveNewCard={handleSaveNewCard}/>
-    )
-}
+//---return---
+    return <CardForm deck={deck} card={newCard} setter={setNewCard} handleSubmit={handleSubmit} handleSaveNewCard={handleSaveNewCard}/>
+};

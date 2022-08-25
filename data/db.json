@@ -9,11 +9,6 @@
       "name": "React Router",
       "description": "React Router is a collection of navigational components that compose declaratively with your application.",
       "id": 2
-    },
-    {
-      "name": "Flash Cards",
-      "description": "flashcards",
-      "id": 3
     }
   ],
   "cards": [
@@ -46,42 +41,6 @@
       "back": "Renders the first matching child <Route> ",
       "deckId": 2,
       "id": 5
-    },
-    {
-      "front": "adsf",
-      "back": "adsfas",
-      "deckId": 1,
-      "id": 6
-    },
-    {
-      "front": "asdfda",
-      "back": "asfddsaf",
-      "deckId": 2,
-      "id": 7
-    },
-    {
-      "front": "Once I add this...",
-      "back": "it adds to the cards arr",
-      "deckId": 3,
-      "id": 8
-    },
-    {
-      "front": "I can save and add a new one",
-      "back": "like this",
-      "deckId": 3,
-      "id": 9
-    },
-    {
-      "front": "this is the front",
-      "back": "this is the back",
-      "deckId": 3,
-      "id": 10
-    },
-    {
-      "front": "I have three cards now",
-      "back": "and I should be able to study them",
-      "deckId": 3,
-      "id": 11
     }
   ]
 }
