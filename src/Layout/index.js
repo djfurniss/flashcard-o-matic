@@ -3,7 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import Header from "./common/Header";
 import NotFound from "./common/NotFound";
 import BreadCrumb from "./common/BreadCrumb.js";
-import Home from "./Home/Home.js";
+import Home from "./home/Home.js";
 import EditDeck from "./EditDeck/EditDeck.js";
 import CreateDeck from "./CreateDeck/CreateDeck.js";
 import DeckStudy from "./DeckStudy/DeckStudy.js";
