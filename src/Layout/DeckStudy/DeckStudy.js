@@ -25,7 +25,7 @@ export default function DeckStudy({deck, setDeck}){
         };
         loadDeck();
         return () => abortController.abort();
-    }, []);
+    }, [deckId]);
 
 //---return---
     return (

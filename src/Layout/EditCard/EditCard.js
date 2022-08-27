@@ -25,7 +25,7 @@ export default function EditCard({deck, setDeck}){
         };
         loadDeckInfo();
         return () => abortController.abort();
-    }, []);
+    }, [deckId]);
     
 //---handler---
     const handleSubmit = async(event) => {
